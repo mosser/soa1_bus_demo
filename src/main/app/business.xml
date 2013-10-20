@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+<mule xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
-    <flow name="server-HandleATaxPayer" doc:name="server-HandleATaxPayer">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="int/handle" doc:name="localhost:8080/int/handle"/>
-        <cxf:jaxws-service serviceClass="internal.HandleTaxPayer" doc:name="HandleTaxPayer"/>
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd">
+    <data-mapper:config name="csv2taxpayer_grf" transformationGraphPath="csv2taxpayer.grf" doc:name="csv2taxpayer_grf"/>
+    <flow name="file-loadTaxPayers" doc:name="file-loadTaxPayers">
+        <file:inbound-endpoint path="./_inputs" moveToDirectory="./_data" responseTimeout="10000" doc:name="_inputs/*.csv">
+            <file:filename-regex-filter pattern=".*\.csv$" caseSensitive="true"/>
+        </file:inbound-endpoint>
+        <data-mapper:transform config-ref="csv2taxpayer_grf" doc:name="-&gt; List&lt;TaxPayer&gt;"/>
+        <collection-splitter doc:name="split"/>
+        <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/handleATaxPayer" doc:name="handleATaxPayer"/>
+        <collection-aggregator failOnTimeout="true" doc:name="aggregate"/>
+        <json:object-to-json-transformer doc:name="-&gt; JSON"/>
+        <file:outbound-endpoint path="./_outputs" outputPattern="results.json" responseTimeout="10000" doc:name="_outputs/results.json"/>
+    </flow>
+    <flow name="vm-HandleATaxPayer" doc:name="vm-HandleATaxPayer">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/internal/handleATaxPayer" doc:name="handleATaxPayer"/>
+        <logger message="Handling #[message.payload.lastName]" level="INFO" doc:name="Logger"/>
         <scripting:component doc:name="Groovy">
             <scripting:script engine="Groovy"><![CDATA[def info = new internal.data.TaxPayerInformation();
 

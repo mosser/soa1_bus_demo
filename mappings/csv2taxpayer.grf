@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph author="mosser" created="Sun Oct 20 17:15:58 CEST 2013" guiVersion="3.4.0.P" id="1382305185786" licenseCode="Unlicensed" licenseType="Unknown" modified="Sun Oct 20 17:15:58 CEST 2013" modifiedBy="mosser" name="csv2taxpayer_grf" preview-file="${Project_Home}/_data/small.csv" revision="1.0" showComponentDetails="false">
+<Global>
+<Metadata __index="0" __referenceCounter="1" __sourcePath="{}/list" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _type="Output" id="ee25b673-d650-4f8e-a3a6-a029779b7068">
+<Record fieldDelimiter="|" name="list" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __index="0" __sourcePath="{}/list/adress/label" containerType="SINGLE" label="label" name="label" type="string"/>
+<Field __index="1" __sourcePath="{}/list/adress/zip" containerType="SINGLE" label="zip" name="zip" type="string"/>
+<Field __index="2" __sourcePath="{}/list/assets/income" containerType="SINGLE" label="income" name="income" type="number"/>
+<Field __index="3" __sourcePath="{}/list/assets/wealth" containerType="SINGLE" label="wealth" name="wealth" type="number"/>
+<Field __index="4" __sourcePath="{}/list/email" containerType="SINGLE" label="email" name="email" type="string"/>
+<Field __index="5" __sourcePath="{}/list/firstName" containerType="SINGLE" label="firstName" name="firstName" type="string"/>
+<Field __index="6" __sourcePath="{}/list/identifier" containerType="SINGLE" label="identifier" name="identifier" type="string"/>
+<Field __index="7" __sourcePath="{}/list/lastName" containerType="SINGLE" label="lastName" name="lastName" type="string"/>
+</Record>
+</Metadata>
+<Metadata __referenceCounter="1" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _type="Input" id="5726517a-f67e-4c36-8929-3a2f85fdebb9">
+<Record fieldDelimiter="," name="small" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field containerType="SINGLE" label="Navn" name="Navn" size="10" type="string"/>
+<Field containerType="SINGLE" label="Fodselar" name="Fodselar" size="10" type="string"/>
+<Field containerType="SINGLE" label="Postnummer" name="Postnummer" size="10" type="string"/>
+<Field containerType="SINGLE" label="Postaddressen" name="Postaddressen" size="10" type="string"/>
+<Field containerType="SINGLE" label="Epost" name="Epost" size="10" type="string"/>
+<Field containerType="SINGLE" label="Fodselsnummer" name="Fodselsnummer" size="10" type="string"/>
+<Field containerType="SINGLE" label="Inntekt" name="Inntekt" size="10" type="string"/>
+<Field containerType="SINGLE" eofAsDelimiter="true" label="Formue" name="Formue" size="10" type="string"/>
+<Field __artificialType="_id" auto_filling="global_row_count" name="__id" type="long"/>
+</Record>
+</Metadata>
+<Dictionary>
+<Entry id="DictionaryEntry0" input="true" name="inputPayload" output="false" type="object"/>
+<Entry id="DictionaryEntry1" input="false" name="outputPayload" output="true" type="object"/>
+</Dictionary>
+</Global>
+<Phase number="0">
+<Node enabled="enabled" fileURL="dict:outputPayload" guiName="Pojo WRITER" guiX="900" guiY="20" id="BEAN_WRITER0" type="BEAN_WRITER">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<clover:collection clover:name="list" xmlns:clover="http://www.cloveretl.com/ns/xmlmapping">
+  <item clover:inPort="0">
+    <adress>
+      <label>$0.label</label>
+      <zip>$0.zip</zip>
+    </adress>
+    <assets>
+      <income>$0.income</income>
+      <wealth>$0.wealth</wealth>
+    </assets>
+    <email>$0.email</email>
+    <firstName>$0.firstName</firstName>
+    <identifier>$0.identifier</identifier>
+    <lastName>$0.lastName</lastName>
+  </item>
+</clover:collection>]]></attr>
+<attr name="_data_format"><![CDATA[JAVA]]></attr>
+<attr name="schema"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<schema-object>
+  <schema-collection>
+    <typed-object-ref type-ref="internal.data.TaxPayer"/>
+  </schema-collection>
+  <typed-object type="internal.data.Address">
+    <typed-object-ref name="label" type-ref="java.lang.String"/>
+    <typed-object-ref name="zip" type-ref="java.lang.String"/>
+  </typed-object>
+  <typed-object type="java.lang.String"/>
+  <typed-object type="internal.data.Assets">
+    <typed-object-ref name="income" type-ref="float"/>
+    <typed-object-ref name="wealth" type-ref="float"/>
+  </typed-object>
+  <typed-object type="internal.data.TaxPayer">
+    <typed-object-ref name="adress" type-ref="internal.data.Address"/>
+    <typed-object-ref name="assets" type-ref="internal.data.Assets"/>
+    <typed-object-ref name="email" type-ref="java.lang.String"/>
+    <typed-object-ref name="firstName" type-ref="java.lang.String"/>
+    <typed-object-ref name="identifier" type-ref="java.lang.String"/>
+    <typed-object-ref name="lastName" type-ref="java.lang.String"/>
+  </typed-object>
+  <typed-object type="float"/>
+</schema-object>
+]]></attr>
+<attr name="cacheInMemory"><![CDATA[true]]></attr>
+</Node>
+<Node charset="UTF-8" enabled="enabled" fileURL="dict:inputPayload" guiName="CSV READER" guiX="20" guiY="20" id="DATA_READER0" quotedStrings="true" skipRows="1" trim="true" type="DATA_READER">
+<attr name="_data_format"><![CDATA[CSV]]></attr>
+<attr name="__dataSourceDefinition"><![CDATA[${Project_Home}/_data/small.csv]]></attr>
+</Node>
+<Node enabled="enabled" guiName="Foreach 'small' -&gt; 'list'" guiX="460" guiY="20" id="FOREACH_SMALL_LIST" transformClass="com.mulesoft.datamapper.transform.MelRecordTransform" type="REFORMAT">
+<attr name="melScript"><![CDATA[//MEL
+//START -> DO NOT REMOVE
+output.__id = (isnull(input.__id) ? null : num2str(input.__id));
+//END -> DO NOT REMOVE
+output.firstName = input.Navn.split(",")[1];      
+output.lastName = input.Navn.split(",")[0]; ;
+output.identifier = input.Fodselsnummer;
+output.email = input.Epost;
+output.label = input.Postaddressen;
+output.zip = input.Postnummer;
+output.income = str2double(input.Inntekt.substring(0,input.Inntekt.length()-2).replace(",",""));
+output.wealth = str2double(input.Formue.substring(0,input.Formue.length()-2).replace(",",""));
+]]></attr>
+</Node>
+<Edge debugMode="true" fromNode="DATA_READER0:0" guiBendpoints="" id="Edge0" inPort="Port 0 (in)" metadata="5726517a-f67e-4c36-8929-3a2f85fdebb9" outPort="Port 0 (output)" toNode="FOREACH_SMALL_LIST:0"/>
+<Edge debugMode="true" fromNode="FOREACH_SMALL_LIST:0" guiBendpoints="" id="Edge1" inPort="Port 0 (in)" metadata="ee25b673-d650-4f8e-a3a6-a029779b7068" outPort="Port 0 (out)" toNode="BEAN_WRITER0:0"/>
+</Phase>
+</Graph>
