@@ -16,9 +16,12 @@ http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schem
             <file:filename-regex-filter pattern=".*\.csv$" caseSensitive="true"/>
         </file:inbound-endpoint>
         <data-mapper:transform config-ref="csv2taxpayer_grf" doc:name="-&gt; List&lt;TaxPayer&gt;"/>
+        <set-variable variableName="cpt" value="0" doc:name="cpt = 0"/>
         <collection-splitter doc:name="split"/>
+        <set-variable variableName="cpt" value="#[(int) flowVars['cpt'] + 1]" doc:name="cpt++"/>
         <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/handleATaxPayer" doc:name="handleATaxPayer"/>
         <collection-aggregator failOnTimeout="true" doc:name="aggregate"/>
+        <logger message="Handled TaxPayers: #[flowVars['cpt']]" level="INFO" doc:name="Logger"/>
         <json:object-to-json-transformer doc:name="-&gt; JSON"/>
         <file:outbound-endpoint path="./_outputs" outputPattern="results.json" responseTimeout="10000" doc:name="_outputs/results.json"/>
     </flow>
