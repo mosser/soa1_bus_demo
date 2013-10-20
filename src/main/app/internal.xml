@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
 	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
 	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <flow name="server-HandleATaxPayer" doc:name="server-HandleATaxPayer">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="int/handle" doc:name="localhost:8080/int/handle"/>
         <cxf:jaxws-service serviceClass="internal.HandleTaxPayer" doc:name="HandleTaxPayer"/>
@@ -23,5 +24,10 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
         <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/taxComputer/simple" doc:name="client/taxComputer/simple"/>
         <cxf:jaxws-client operation="simple" clientClass="proxies.ext.taxComputer.TaxComputerService" port="TaxComputerPort" enableMuleSoapHeaders="true" doc:name="simple"/>
         <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" path="ext/tax_computer" method="POST" doc:name="localhost:8090/ext/tax_computer"/>
+    </flow>
+    <flow name="client-taxComputer-complex" doc:name="client-taxComputer-complex">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/taxComputer/complex" doc:name="client/taxComputer/complex"/>
+        <cxf:jaxws-client operation="complex" clientClass="proxies.ext.taxComputer.TaxComputerService" port="TaxComputerPort" enableMuleSoapHeaders="true" doc:name="complex"/>
+        <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" path="ext/tax_computer" method="POST" doc:name="localhost:8090/etx/tax_computer"/>
     </flow>
 </mule>
