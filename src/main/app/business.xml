@@ -30,6 +30,7 @@ http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schem
     <flow name="vm-HandleATaxPayer" doc:name="vm-HandleATaxPayer">
         <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/internal/handleATaxPayer" doc:name="handleATaxPayer"/>
         <logger message="Handling #[message.payload.lastName]" level="INFO" doc:name="Logger"/>
+        <set-variable variableName="current" value="#[message.payload]" doc:name="current = this"/>
         <choice doc:name="Choice">
             <when expression="#[message.payload.assets.wealth &lt;15000]">
                 <logger message="Processing #[message.payload.lastName] with SIMPLE" level="INFO" doc:name="log-SIMPLE"/>
@@ -40,6 +41,15 @@ http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schem
                 <flow-ref name="sub-handleWithComplex" doc:name="handleWithComplex"/>
             </otherwise>
         </choice>
+        <scripting:component doc:name="-&gt; TaxPayerInformation">
+            <scripting:script engine="Groovy"><![CDATA[def tpi = new internal.data.TaxPayerInformation();
+
+tpi.setLastName(flowVars['current'].lastName);
+tpi.setFirstName(flowVars['current'].firstName);
+tpi.setTaxAmount(message.payload.amount.trunc());
+
+return tpi;]]></scripting:script>
+        </scripting:component>
     </flow>
     <sub-flow name="sub-handeWithSimple" doc:name="sub-handeWithSimple">
         <data-mapper:transform config-ref="taxpayer2simpletaxrequest_grf" doc:name="-&gt; SimpleTaxRequest"/>

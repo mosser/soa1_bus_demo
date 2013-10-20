@@ -226,7 +226,7 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="firstName" type="xs:string"/>
           <xs:element minOccurs="0" name="lastName" type="xs:string"/>
-          <xs:element name="taxAmout" type="xs:float"/>
+          <xs:element minOccurs="0" name="taxAmount" type="xs:float"/>
         </xs:sequence>
       </xs:complexType>
     </xs:schema>
@@ -290,7 +290,7 @@
    <soapenv:Body>
       <ext:simple>
          <simpleTaxInfo>
-            <id>646e0d19-af3d-4869-be4c-f44bb3c86a0e</id>
+            <id>8c81d5a8-588b-4c0e-b91e-f3b31c866e80</id>
             <income>1000</income>
          </simpleTaxInfo>
       </ext:simple>
@@ -309,7 +309,7 @@
    <soapenv:Body>
       <ext:complex>
          <complexTaxInfo>
-            <id>b03b0ebf-f5fa-4749-9196-47def20c66a0</id>
+            <id>1d8feda7-68d6-4b2e-bda6-2ac6d0d03068</id>
             <income>1000</income>
             <assets>1000</assets>
             <zone>02</zone>
@@ -330,7 +330,7 @@
    <soapenv:Body>
       <ext:complex>
          <complexTaxInfo>
-            <id>ba0a80bb-8336-4b43-b94a-f7b79c3fd174</id>
+            <id>3075dead-dbab-401e-aefe-497bdf6806c4</id>
             <income>1000</income>
             <assets>1000</assets>
             <zone>52</zone>
@@ -364,5 +364,5 @@
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Schema Compliance"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion"/><con:assertion type="XPath Match" name="XPath Match"><con:configuration><path>//result</path><content><![CDATA[<result>
   <firstName>Sebastien</firstName>
   <lastName>Mosser</lastName>
-  <taxAmout>0.0</taxAmout>
+  <taxAmount>26000.0</taxAmount>
 </result>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:sensitiveInformation/></con:soapui-project>

@@ -4,7 +4,7 @@ public class TaxPayerInformation {
 
 	private String lastName;
 	private String firstName;
-	private float taxAmout;
+	private float taxAmount;
 	
 	
 	public String getLastName() {
@@ -19,11 +19,11 @@ public class TaxPayerInformation {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	public float getTaxAmout() {
-		return taxAmout;
+	public Float getTaxAmount() {
+		return taxAmount;
 	}
-	public void setTaxAmout(float taxAmout) {
-		this.taxAmout = taxAmout;
+	public void setTaxAmount(Float taxAmount) {
+		this.taxAmount = taxAmount;
 	}
 	
 	
