@@ -50,7 +50,11 @@ return info;]]></scripting:script>
     <sub-flow name="sub-handeWithSimple" doc:name="sub-handeWithSimple">
         <data-mapper:transform config-ref="taxpayer2simpletaxrequest_grf" doc:name="-&gt; SimpleTaxRequest"/>
         <enricher target="#[message.payload.id]" doc:name="Message Enricher">
-            <expression-transformer expression="&quot;646e0d19-af3d-4869-be4c-f44bb3c86a0e&quot;" doc:name="static id"/>
+            <processor-chain doc:name="Processor Chain">
+                <expression-transformer expression="#[new Object[]{}]" doc:name="request"/>
+                <cxf:jaxws-client operation="build" clientClass="proxies.ext.idgen.IdentifierGeneratorService" port="AnonymousIdentifierPort" enableMuleSoapHeaders="true" doc:name="idGen"/>
+                <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" path="ext/idGen" method="POST" doc:name="localhost:8090/ext/idGen"/>
+            </processor-chain>
         </enricher>
         <cxf:jaxws-client operation="simple" clientClass="proxies.ext.taxComputer.TaxComputerService" port="TaxComputerPort" enableMuleSoapHeaders="true" doc:name="simple"/>
         <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" path="ext/tax_computer" method="POST" doc:name="localhost:8090/ext/tax_computer"/>
