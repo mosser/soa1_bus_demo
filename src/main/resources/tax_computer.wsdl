@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="TaxComputerService" targetNamespace="http://external/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://external/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+<xs:schema elementFormDefault="unqualified" targetNamespace="http://external/" version="1.0" xmlns:tns="http://external/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name="advancedTaxRequest" type="tns:advancedTaxRequest"/>
+<xs:element name="complex" type="tns:complex"/>
+<xs:element name="complexResponse" type="tns:complexResponse"/>
+<xs:element name="simple" type="tns:simple"/>
+<xs:element name="simpleResponse" type="tns:simpleResponse"/>
+<xs:element name="simpleTaxRequest" type="tns:simpleTaxRequest"/>
+<xs:complexType name="simple">
+<xs:sequence>
+<xs:element minOccurs="0" name="simpleTaxInfo" type="tns:simpleTaxRequest"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="simpleTaxRequest">
+<xs:sequence>
+<xs:element name="id" type="xs:string"/>
+<xs:element name="income" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="simpleResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="simple_result" type="tns:taxComputation"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="taxComputation">
+<xs:sequence>
+<xs:element minOccurs="0" name="date" type="xs:dateTime"/>
+<xs:element name="amount" type="xs:float"/>
+<xs:element minOccurs="0" name="identifier" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="complex">
+<xs:sequence>
+<xs:element minOccurs="0" name="complexTaxInfo" type="tns:advancedTaxRequest"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="advancedTaxRequest">
+<xs:complexContent>
+<xs:extension base="tns:simpleTaxRequest">
+<xs:sequence>
+<xs:element name="assets" type="xs:float"/>
+<xs:element name="zone" type="xs:int"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="complexResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="complex_result" type="tns:taxComputation"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="simpleResponse">
+    <wsdl:part element="tns:simpleResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="complexResponse">
+    <wsdl:part element="tns:complexResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="simple">
+    <wsdl:part element="tns:simple" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="complex">
+    <wsdl:part element="tns:complex" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="TaxComputer">
+    <wsdl:operation name="simple">
+      <wsdl:input message="tns:simple" name="simple">
+    </wsdl:input>
+      <wsdl:output message="tns:simpleResponse" name="simpleResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="complex">
+      <wsdl:input message="tns:complex" name="complex">
+    </wsdl:input>
+      <wsdl:output message="tns:complexResponse" name="complexResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TaxComputerServiceSoapBinding" type="tns:TaxComputer">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="simple">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="simple">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="simpleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="complex">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="complex">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="complexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TaxComputerService">
+    <wsdl:port binding="tns:TaxComputerServiceSoapBinding" name="TaxComputerPort">
+      <soap:address location="http://localhost:8090/ext/tax_computer"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

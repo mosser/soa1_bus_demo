@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="IdentifierGeneratorService" targetNamespace="http://external/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://external/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+<xs:schema elementFormDefault="unqualified" targetNamespace="http://external/" version="1.0" xmlns:tns="http://external/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name="build" type="tns:build"/>
+<xs:element name="buildResponse" type="tns:buildResponse"/>
+<xs:complexType name="build">
+<xs:sequence/>
+</xs:complexType>
+<xs:complexType name="buildResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="identifier" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="buildResponse">
+    <wsdl:part element="tns:buildResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="build">
+    <wsdl:part element="tns:build" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="AnonymousIdentifier">
+    <wsdl:operation name="build">
+      <wsdl:input message="tns:build" name="build">
+    </wsdl:input>
+      <wsdl:output message="tns:buildResponse" name="buildResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="IdentifierGeneratorServiceSoapBinding" type="tns:AnonymousIdentifier">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="build">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="build">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="buildResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="IdentifierGeneratorService">
+    <wsdl:port binding="tns:IdentifierGeneratorServiceSoapBinding" name="AnonymousIdentifierPort">
+      <soap:address location="http://localhost:8090/ext/idGen"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
