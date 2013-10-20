@@ -28,6 +28,14 @@ http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schem
     <flow name="vm-HandleATaxPayer" doc:name="vm-HandleATaxPayer">
         <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/internal/handleATaxPayer" doc:name="handleATaxPayer"/>
         <logger message="Handling #[message.payload.lastName]" level="INFO" doc:name="Logger"/>
+        <choice doc:name="Choice">
+            <when expression="#[message.payload.assets.wealth &lt;15000]">
+                <logger message="Processing #[message.payload.lastName] with SIMPLE" level="INFO" doc:name="log-SIMPLE"/>
+            </when>
+            <otherwise>
+                <logger message="Processing #[message.payload.lastName] with COMPLEX" level="INFO" doc:name="log-COMPLEX"/>
+            </otherwise>
+        </choice>
         <scripting:component doc:name="Groovy">
             <scripting:script engine="Groovy"><![CDATA[def info = new internal.data.TaxPayerInformation();
 
