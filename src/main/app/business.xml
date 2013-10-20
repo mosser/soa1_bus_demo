@@ -50,6 +50,11 @@ tpi.setTaxAmount(message.payload.amount.trunc());
 
 return tpi;]]></scripting:script>
         </scripting:component>
+        <async doc:name="Async">
+            <set-variable variableName="fileName" value="letter-#[message.payload.lastName]-#[message.payload.firstName].data.json" doc:name="fileName"/>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+            <file:outbound-endpoint path="./_outputs/posten" outputPattern="#[flowVars['fileName']]" responseTimeout="10000" doc:name="send letter"/>
+        </async>
     </flow>
     <sub-flow name="sub-handeWithSimple" doc:name="sub-handeWithSimple">
         <data-mapper:transform config-ref="taxpayer2simpletaxrequest_grf" doc:name="-&gt; SimpleTaxRequest"/>
