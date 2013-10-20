@@ -11,6 +11,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
 http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd">
     <data-mapper:config name="csv2taxpayer_grf" transformationGraphPath="csv2taxpayer.grf" doc:name="csv2taxpayer_grf"/>
+    <data-mapper:config name="taxpayer2simpletaxrequest_grf" transformationGraphPath="taxpayer2simpletaxrequest.grf" doc:name="taxpayer2simpletaxrequest_grf"/>
     <flow name="file-loadTaxPayers" doc:name="file-loadTaxPayers">
         <file:inbound-endpoint path="./_inputs" moveToDirectory="./_data" responseTimeout="10000" doc:name="_inputs/*.csv">
             <file:filename-regex-filter pattern=".*\.csv$" caseSensitive="true"/>
@@ -31,18 +32,27 @@ http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schem
         <choice doc:name="Choice">
             <when expression="#[message.payload.assets.wealth &lt;15000]">
                 <logger message="Processing #[message.payload.lastName] with SIMPLE" level="INFO" doc:name="log-SIMPLE"/>
+                <flow-ref name="sub-handeWithSimple" doc:name="handleWithSimple"/>
             </when>
             <otherwise>
                 <logger message="Processing #[message.payload.lastName] with COMPLEX" level="INFO" doc:name="log-COMPLEX"/>
-            </otherwise>
-        </choice>
-        <scripting:component doc:name="Groovy">
-            <scripting:script engine="Groovy"><![CDATA[def info = new internal.data.TaxPayerInformation();
+                <scripting:component doc:name="Groovy">
+                    <scripting:script engine="Groovy"><![CDATA[def info = new internal.data.TaxPayerInformation();
 
 info.setLastName(message.payload.lastName);
 info.setFirstName(message.payload.firstName);
 
 return info;]]></scripting:script>
-        </scripting:component>
+                </scripting:component>
+            </otherwise>
+        </choice>
     </flow>
+    <sub-flow name="sub-handeWithSimple" doc:name="sub-handeWithSimple">
+        <data-mapper:transform config-ref="taxpayer2simpletaxrequest_grf" doc:name="-&gt; SimpleTaxRequest"/>
+        <enricher target="#[message.payload.id]" doc:name="Message Enricher">
+            <expression-transformer expression="&quot;646e0d19-af3d-4869-be4c-f44bb3c86a0e&quot;" doc:name="static id"/>
+        </enricher>
+        <cxf:jaxws-client operation="simple" clientClass="proxies.ext.taxComputer.TaxComputerService" port="TaxComputerPort" enableMuleSoapHeaders="true" doc:name="simple"/>
+        <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" path="ext/tax_computer" method="POST" doc:name="localhost:8090/ext/tax_computer"/>
+    </sub-flow>
 </mule>

@@ -7,11 +7,13 @@ http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <flow name="server-IdentifierGenerator" doc:name="server-IdentifierGenerator">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" path="ext/idGen" doc:name="localhost:8090/ext/idGen"/>
+        <logger message="Calling external service: IdentifierGenerator" level="INFO" doc:name="Logger"/>
         <cxf:jaxws-service serviceClass="external.IdentifierGenerator" doc:name="IdentifierGenerator"/>
         <component class="external.impl.IdentifierGeneratorImpl" doc:name="IdentifierGeneratorImpl"/>
     </flow>
     <flow name="server-TaxComputer" doc:name="server-TaxComputer">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8090" path="ext/tax_computer" doc:name="localhost:8090/ext/tax_computer"/>
+        <logger message="Calling external service: TaxComputer" level="INFO" doc:name="Logger"/>
         <cxf:jaxws-service serviceClass="external.TaxComputer" doc:name="TaxComputer"/>
         <component class="external.impl.TaxComputerImpl" doc:name="TaxComputerImpl"/>
     </flow>
