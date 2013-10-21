@@ -52,6 +52,23 @@ tpi.setTaxAmount(message.payload.amount.trunc());
 
 return tpi;]]></scripting:script>
         </scripting:component>
+        <flow-ref name="sub-post-processing" doc:name="post-processing"/>
+    </flow>
+    <sub-flow name="sub-handeWithSimple" doc:name="sub-handeWithSimple">
+        <data-mapper:transform config-ref="taxpayer2simpletaxrequest_grf" doc:name="-&gt; SimpleTaxRequest"/>
+        <enricher target="#[message.payload.id]" doc:name="Message Enricher">
+            <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/idGen" doc:name="client/idGen"/>
+        </enricher>
+        <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/taxComputer/simple" doc:name="client/taxComputer/simple"/>
+    </sub-flow>
+    <sub-flow name="sub-handleWithComplex" doc:name="sub-handleWithComplex">
+        <data-mapper:transform config-ref="taxpayer2advancedtaxrequest_grf" doc:name="-&gt; AdvancedTaxRequest"/>
+        <enricher target="#[message.payload.id]" doc:name="Message Enricher">
+            <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/idGen" doc:name="client/idGen"/>
+        </enricher>
+        <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/taxComputer/complex" doc:name="client/taxComputer/complex"/>
+    </sub-flow>
+    <sub-flow name="sub-post-processing" doc:name="sub-post-processing">
         <set-variable variableName="result" value="#[message.payload]" doc:name="result = msg"/>
         <all doc:name="All">
             <processor-chain>
@@ -70,19 +87,5 @@ return tpi;]]></scripting:script>
             </processor-chain>
         </all>
         <expression-transformer expression="#[flowVars['result']]" doc:name="reply result"/>
-    </flow>
-    <sub-flow name="sub-handeWithSimple" doc:name="sub-handeWithSimple">
-        <data-mapper:transform config-ref="taxpayer2simpletaxrequest_grf" doc:name="-&gt; SimpleTaxRequest"/>
-        <enricher target="#[message.payload.id]" doc:name="Message Enricher">
-            <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/idGen" doc:name="client/idGen"/>
-        </enricher>
-        <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/taxComputer/simple" doc:name="client/taxComputer/simple"/>
-    </sub-flow>
-    <sub-flow name="sub-handleWithComplex" doc:name="sub-handleWithComplex">
-        <data-mapper:transform config-ref="taxpayer2advancedtaxrequest_grf" doc:name="-&gt; AdvancedTaxRequest"/>
-        <enricher target="#[message.payload.id]" doc:name="Message Enricher">
-            <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/idGen" doc:name="client/idGen"/>
-        </enricher>
-        <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/taxComputer/complex" doc:name="client/taxComputer/complex"/>
     </sub-flow>
 </mule>
