@@ -280,7 +280,74 @@
          </person>
       </int:handle>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://internal/TaxComputer/handle"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="External Services"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Compute with Simple rules" searchProperties="true" id="a8cb304e-c6c7-4413-a2ed-f347794f1d96"><con:settings/><con:testStep type="request" name="Get ID"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>IdentifierGeneratorServiceSoapBinding</con:interface><con:operation>build</con:operation><con:request name="Get ID"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8090/ext/idGen</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ext="http://external/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://internal/TaxComputer/handle"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="ConsultTaxPayerInformationServiceSoapBinding" type="wsdl" bindingName="{http://internal/}ConsultTaxPayerInformationServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/int/consult?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/int/consult?wsdl"><con:part><con:url>http://localhost:8080/int/consult?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ConsultTaxPayerInformationService" targetNamespace="http://internal/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://internal/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://internal/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="retrieve" type="tns:retrieve"/>
+      <xs:element name="retrieveResponse" type="tns:retrieveResponse"/>
+      <xs:complexType name="retrieve">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="fodselsnummer" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="retrieveResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="result" type="tns:taxPayerInformation"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="taxPayerInformation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+          <xs:element minOccurs="0" name="lastName" type="xs:string"/>
+          <xs:element minOccurs="0" name="taxAmount" type="xs:float"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="retrieve">
+    <wsdl:part element="tns:retrieve" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="retrieveResponse">
+    <wsdl:part element="tns:retrieveResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ConsultTaxInformation">
+    <wsdl:operation name="retrieve">
+      <wsdl:input message="tns:retrieve" name="retrieve"></wsdl:input>
+      <wsdl:output message="tns:retrieveResponse" name="retrieveResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ConsultTaxPayerInformationServiceSoapBinding" type="tns:ConsultTaxInformation">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="retrieve">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="retrieve">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="retrieveResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ConsultTaxPayerInformationService">
+    <wsdl:port binding="tns:ConsultTaxPayerInformationServiceSoapBinding" name="ConsultTaxInformationPort">
+      <soap:address location="http://localhost:8080/int/consult"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/int/consult</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="retrieve" bindingOperationName="retrieve" type="Request-Response" outputName="retrieveResponse" inputName="retrieve" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/int/consult</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:int="http://internal/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <int:retrieve>
+         <fodselsnummer>??</fodselsnummer>
+      </int:retrieve>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://internal/ConsultTaxInformation/retrieve"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/int/consult</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:int="http://internal/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <int:retrieve>
+         <fodselsnummer>C79D1004-A72D-1817-20B2-D0F69E787953</fodselsnummer>
+      </int:retrieve>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://internal/ConsultTaxInformation/retrieve"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="External Services"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Compute with Simple rules" searchProperties="true" id="a8cb304e-c6c7-4413-a2ed-f347794f1d96"><con:settings/><con:testStep type="request" name="Get ID"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>IdentifierGeneratorServiceSoapBinding</con:interface><con:operation>build</con:operation><con:request name="Get ID"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8090/ext/idGen</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ext="http://external/">
    <soapenv:Header/>
    <soapenv:Body>
       <ext:build/>
