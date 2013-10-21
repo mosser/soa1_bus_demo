@@ -54,9 +54,9 @@ return tpi;]]></scripting:script>
         </scripting:component>
         <flow-ref name="sub-post-processing" doc:name="post-processing"/>
     </flow>
-    <flow name="server-ConsultTaxPayerInformation" doc:name="server-ConsultTaxPayerInformation">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="int/consult" doc:name="localhost:8080/int/consult"/>
-        <cxf:jaxws-service serviceClass="internal.ConsultTaxPayerInformation" doc:name="ConsultTaxPayerInformation"/>
+    <flow name="vm-ConsultTaxPayer" doc:name="vm-ConsultTaxPayer">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/int/ConsultTaxPayer" doc:name="consultTaxPayer"/>
+        <logger message="Consulting database / #[message.payload]" level="INFO" doc:name="Logger"/>
         <jdbc-ee:outbound-endpoint exchange-pattern="request-response" queryKey="get" queryTimeout="-1" connector-ref="DatabaseConnector" doc:name="SELECT FROM RESULTS">
             <jdbc-ee:query key="get" value="SELECT * FROM RESULTS WHERE person_id = #[payload:]"/>
         </jdbc-ee:outbound-endpoint>

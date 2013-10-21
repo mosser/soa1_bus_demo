@@ -14,6 +14,11 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         <cxf:jaxws-service serviceClass="internal.HandleTaxPayer" doc:name="HandleTaxPayer"/>
         <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/internal/handleATaxPayer" doc:name="VM"/>
     </flow>
+    <flow name="server-ConsultTaxPayerInformation" doc:name="server-ConsultTaxPayerInformation">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="int/consult" doc:name="localhost:8080/int/consult"/>
+        <cxf:jaxws-service serviceClass="internal.ConsultTaxPayerInformation" doc:name="ConsultTaxPayerInformation"/>
+        <vm:outbound-endpoint exchange-pattern="request-response" path="/vm/int/ConsultTaxPayer" doc:name="consultTaxPayer"/>
+    </flow>
     <flow name="client-idGen" doc:name="client-idGen">
         <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/internal/client/idGen" doc:name="client/idGen"/>
         <expression-transformer expression="#[new Object[]{}]" doc:name="request"/>
