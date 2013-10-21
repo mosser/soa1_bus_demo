@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph author="mosser" created="Mon Oct 21 07:50:26 CEST 2013" guiVersion="3.4.0.P" id="1382338414051" licenseCode="Unlicensed" licenseType="Unknown" modified="Mon Oct 21 07:50:26 CEST 2013" modifiedBy="mosser" name="taxpayerinformation2result_grf" revision="1.0" showComponentDetails="false">
+<Global>
+<Metadata __index="0" __referenceCounter="1" __sourcePath="{}/result" _dataStructure="OBJECT" _id="__id" _type="Output" id="5f255fa4-2b3f-4c55-a963-a736c3c3a533">
+<Record fieldDelimiter="|" name="result" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __sourcePath="{}/result/amount" containerType="SINGLE" label="amount" name="amount" type="number"/>
+<Field __sourcePath="{}/result/first" containerType="SINGLE" label="first" name="first" type="string"/>
+<Field __sourcePath="{}/result/id" containerType="SINGLE" label="id" name="id" type="string"/>
+<Field __sourcePath="{}/result/last" containerType="SINGLE" label="last" name="last" type="string"/>
+</Record>
+</Metadata>
+<Metadata __index="0" __referenceCounter="1" __sourcePath="{}/object" _dataStructure="OBJECT" _id="__id" _type="Input" id="930041cc-546f-4895-a880-6433ec14cad7">
+<Record fieldDelimiter="|" name="TaxPayerInformation" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __index="0" __sourcePath="{}/object/firstName" containerType="SINGLE" label="firstName" name="firstName" type="string"/>
+<Field __index="1" __sourcePath="{}/object/lastName" containerType="SINGLE" label="lastName" name="lastName" type="string"/>
+<Field __index="2" __sourcePath="{}/object/taxAmount" containerType="SINGLE" label="taxAmount" name="taxAmount" type="number"/>
+</Record>
+</Metadata>
+<Dictionary>
+<Entry id="DictionaryEntry0" input="true" name="inputPayload" output="false" type="object"/>
+<Entry id="DictionaryEntry1" input="false" name="outputPayload" output="true" type="object"/>
+</Dictionary>
+</Global>
+<Phase number="0">
+<Node enabled="enabled" fileURL="dict:inputPayload" guiName="Pojo READER" guiX="20" guiY="20" id="BEAN_READER0" type="BEAN_READER">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Context outPort="0" sequenceField="__id" xpath=".">
+  <Mapping cloverField="firstName" trim="true" xpath="firstName"/>
+  <Mapping cloverField="lastName" trim="true" xpath="lastName"/>
+  <Mapping cloverField="taxAmount" trim="true" xpath="taxAmount"/>
+</Context>
+]]></attr>
+<attr name="_data_format"><![CDATA[JAVA]]></attr>
+<attr name="schema"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<schema-object>
+  <typed-object-ref type-ref="internal.data.TaxPayerInformation"/>
+  <typed-object type="internal.data.TaxPayerInformation">
+    <typed-object-ref name="firstName" type-ref="java.lang.String"/>
+    <typed-object-ref name="lastName" type-ref="java.lang.String"/>
+    <typed-object-ref name="taxAmount" type-ref="java.lang.Float"/>
+  </typed-object>
+  <typed-object type="java.lang.String"/>
+  <typed-object type="java.lang.Float"/>
+</schema-object>
+]]></attr>
+</Node>
+<Node enabled="enabled" guiName="Foreach 'object' -&gt; 'result'" guiX="460" guiY="20" id="FOREACH_OBJECT_RESULT" transformClass="com.mulesoft.datamapper.transform.MelRecordTransform" type="REFORMAT">
+<attr name="melScript"><![CDATA[//MEL
+//START -> DO NOT REMOVE
+output.__id = input.__id;
+//END -> DO NOT REMOVE
+output.first = input.firstName;
+output.last = input.lastName;
+output.amount = input.taxAmount;]]></attr>
+</Node>
+<Node enabled="enabled" fileURL="dict:outputPayload" guiName="Map&lt;k,v&gt; WRITER" guiX="900" guiY="20" id="MAP_WRITER0" type="MAP_WRITER">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<result xmlns:clover="http://www.cloveretl.com/ns/xmlmapping" clover:inPort="0">
+  <amount>$0.amount</amount>
+  <first>$0.first</first>
+  <id>$0.id</id>
+  <last>$0.last</last>
+</result>]]></attr>
+<attr name="_data_format"><![CDATA[MAP]]></attr>
+<attr name="cacheInMemory"><![CDATA[true]]></attr>
+</Node>
+<Edge debugMode="true" fromNode="BEAN_READER0:0" guiBendpoints="" id="Edge0" inPort="Port 0 (in)" metadata="930041cc-546f-4895-a880-6433ec14cad7" outPort="Port 0 (out)" toNode="FOREACH_OBJECT_RESULT:0"/>
+<Edge debugMode="true" fromNode="FOREACH_OBJECT_RESULT:0" guiBendpoints="" id="Edge1" inPort="Port 0 (in)" metadata="5f255fa4-2b3f-4c55-a963-a736c3c3a533" outPort="Port 0 (out)" toNode="MAP_WRITER0:0"/>
+</Phase>
+</Graph>
