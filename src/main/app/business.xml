@@ -31,7 +31,7 @@ http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/
     </flow>
     <flow name="vm-HandleATaxPayer" doc:name="vm-HandleATaxPayer">
         <vm:inbound-endpoint exchange-pattern="request-response" path="/vm/internal/handleATaxPayer" doc:name="handleATaxPayer"/>
-        <logger message="Handling #[message.payload.lastName]" level="INFO" doc:name="Logger"/>
+        <logger message="Handling #[message.payload.lastName] / #[message.payload.firstName] / #[message.payload.identifier]" level="INFO" doc:name="Logger"/>
         <set-variable variableName="current" value="#[message.payload]" doc:name="current = this"/>
         <choice doc:name="Choice">
             <when expression="#[message.payload.assets.wealth &lt;15000]">
@@ -52,24 +52,24 @@ tpi.setTaxAmount(message.payload.amount.trunc());
 
 return tpi;]]></scripting:script>
         </scripting:component>
-        <async doc:name="Async">
-            <all doc:name="All">
-                <processor-chain>
-                    <set-variable variableName="fileName" value="letter-#[message.payload.lastName]-#[message.payload.firstName].data.json" doc:name="fileName"/>
-                    <json:object-to-json-transformer doc:name="Object to JSON"/>
-                    <file:outbound-endpoint path="./_outputs/posten" outputPattern="#[flowVars['fileName']]" responseTimeout="10000" doc:name="send letter"/>
-                </processor-chain>
-                <processor-chain>
-                    <data-mapper:transform config-ref="taxpayerinformation2result_grf" doc:name="-&gt; query"/>
-                    <enricher target="#[message.payload['id']]" doc:name="Message Enricher">
-                        <expression-transformer expression="#[flowVars['current'].identifier]" doc:name="add id"/>
-                    </enricher>
-                    <jdbc-ee:outbound-endpoint exchange-pattern="one-way" queryKey="add" queryTimeout="-1" connector-ref="DatabaseConnector" doc:name="INSERT INTO RESULTS">
-                        <jdbc-ee:query key="add" value="INSERT INTO RESULTS VALUES (#[message.payload.id], #[message.payload.last], #[message.payload.first], #[message.payload.amount])"/>
-                    </jdbc-ee:outbound-endpoint>
-                </processor-chain>
-            </all>
-        </async>
+        <set-variable variableName="result" value="#[message.payload]" doc:name="result = msg"/>
+        <all doc:name="All">
+            <processor-chain>
+                <set-variable variableName="fileName" value="letter-#[message.payload.lastName]-#[message.payload.firstName].data.json" doc:name="fileName"/>
+                <json:object-to-json-transformer doc:name="Object to JSON"/>
+                <file:outbound-endpoint path="./_outputs/posten" outputPattern="#[flowVars['fileName']]" responseTimeout="10000" doc:name="send letter"/>
+            </processor-chain>
+            <processor-chain>
+                <data-mapper:transform config-ref="taxpayerinformation2result_grf" doc:name="-&gt; query"/>
+                <enricher target="#[message.payload['id']]" doc:name="Message Enricher">
+                    <expression-transformer expression="#[flowVars['current'].identifier]" doc:name="add id"/>
+                </enricher>
+                <jdbc-ee:outbound-endpoint exchange-pattern="one-way" queryKey="add" queryTimeout="-1" connector-ref="DatabaseConnector" doc:name="INSERT INTO RESULTS">
+                    <jdbc-ee:query key="add" value="INSERT INTO RESULTS VALUES (#[message.payload.id], #[message.payload.last], #[message.payload.first], #[message.payload.amount])"/>
+                </jdbc-ee:outbound-endpoint>
+            </processor-chain>
+        </all>
+        <expression-transformer expression="#[flowVars['result']]" doc:name="reply result"/>
     </flow>
     <sub-flow name="sub-handeWithSimple" doc:name="sub-handeWithSimple">
         <data-mapper:transform config-ref="taxpayer2simpletaxrequest_grf" doc:name="-&gt; SimpleTaxRequest"/>
