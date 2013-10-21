@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    <spring:beans>
+		<spring:bean id="Derby_Data_Source"
+			class="org.enhydra.jdbc.standard.StandardXADataSource"
+			destroy-method="shutdown" name="DataBean">
+			<spring:property name="driverName"
+				value="org.apache.derby.jdbc.EmbeddedDriver" />
+            <spring:property name="url" value="jdbc:derby:memory:glue-database;create=true"/>
+		</spring:bean>
+	</spring:beans>
+<jdbc-ee:connector name="DatabaseConnector" dataSource-ref="Derby_Data_Source" validateConnections="true" queryTimeout="-1" pollingFrequency="0" doc:name="Database"/>
+    <flow name="init-database" doc:name="init-database">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="admin/init" doc:name="localhost:8080/admin/init"/>
+        <scripting:component doc:name="CREATE TABLE">
+            <scripting:script engine="Groovy"><![CDATA[jdbcConnector = muleContext.getRegistry().lookupConnector("DatabaseConnector");
+qr = jdbcConnector.getQueryRunner();
+conn = jdbcConnector.getConnection();
+qr.update(conn, "CREATE TABLE results (person_id varchar(256), first_name varchar(256), last_name varchar(256), tax_value float)");
+return "Database initialized";
+]]></scripting:script>
+        </scripting:component>
+    </flow>
+</mule>
